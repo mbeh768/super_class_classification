@@ -39,8 +39,9 @@ encoder_dict = dict(
 
 
 classifier_dict = dict(
-			ProtoNet      = classifier.Prototype_Metric,
-			DN4           = classifier.ImgtoClass_Metric) 
+			ProtoNet       = classifier.Prototype_Metric,
+			DN4            = classifier.ImgtoClass_Metric,
+			DN4_SuperClass = classifier.ImgtoSuperClass_Metric)
 
 
 
@@ -135,7 +136,7 @@ def define_model(pretrained=False, model_root=None, encoder_model='Conv64F', cla
 	if use_gpu:
 		assert(torch.cuda.is_available())
 
-	if classifier_model in ['ProtoNet', 'DN4']:
+	if classifier_model in ['ProtoNet', 'DN4', 'DN4_SuperClass']:
 		model = Fewshot_model(encoder_model=encoder_model, classifier_model=classifier_model, **kwargs)
 
 	else:

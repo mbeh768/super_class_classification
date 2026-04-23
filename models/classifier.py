@@ -117,3 +117,61 @@ class ImgtoClass_Metric(nn.Module):
 		img2class_sim = self.cal_cosinesimilarity(x1, x2)
 
 		return img2class_sim
+
+
+
+# =========================== Zero-shot Super-Class on top of DN4 =========================== #
+class ImgtoSuperClass_Metric(nn.Module):
+	'''
+		Extends DN4 with one extra "super-class" score formed by pooling the local
+		descriptors of the first `base_per_super` base classes of the episode. No
+		training or supervision is added; the super-class score is computed from the
+		exact same supports DN4 already uses.
+
+		Output shape: (Q, way_num + 1). Columns [0..way_num) are the standard DN4
+		base-class scores. Column `way_num` is the super-class score.
+
+		Geometric rationale: the super-class descriptor bank is the union of its
+		constituents' banks, so a query from a constituent class gets top-k matches
+		that are a superset of that class's top-k — super_score >= constituent_score.
+		A query from a non-constituent class gets top-k inside an unrelated bank, so
+		the true class should still win.
+	'''
+	def __init__(self, way_num=5, shot_num=5, neighbor_k=3, base_per_super=2):
+		super(ImgtoSuperClass_Metric, self).__init__()
+		self.way_num = way_num
+		self.shot_num = shot_num
+		self.neighbor_k = neighbor_k
+		self.base_per_super = base_per_super
+
+
+	def cal_cosinesimilarity(self, input1, input2):
+		# Queries: [Q, d, H, W] -> [Q, HW, d] normalized
+		query = input1.contiguous().view(input1.size(0), input1.size(1), -1).permute(0, 2, 1)
+		query = query / torch.norm(query, 2, 2, True)
+		query = query.unsqueeze(1)                                                     # [Q, 1, HW, d]
+
+		# Supports: [S, d, H, W] -> normalize -> group by class -> [C, d, shot*HW]
+		support = input2.contiguous().view(input2.size(0), input2.size(1), -1).permute(0, 2, 1)
+		support = support / torch.norm(support, 2, 2, True)
+		support = support.contiguous().view(-1, self.shot_num * support.size(1), support.size(2))
+		support = support.permute(0, 2, 1)                                             # [C, d, shot*HW]
+
+		# Standard DN4 base-class scores
+		base_sim = torch.matmul(query, support)                                        # [Q, C, HW, shot*HW]
+		base_topk, _ = torch.topk(base_sim, self.neighbor_k, 3)                        # [Q, C, HW, k]
+
+		# Super-class: pool the first `base_per_super` classes' descriptors into one bank
+		d = support.size(1)
+		super_bank = support[:self.base_per_super].permute(1, 0, 2).contiguous().view(d, -1).unsqueeze(0)
+		# [1, d, base_per_super * shot * HW]
+		super_sim = torch.matmul(query, super_bank)                                    # [Q, 1, HW, bps*shot*HW]
+		super_topk, _ = torch.topk(super_sim, self.neighbor_k, 3)                      # [Q, 1, HW, k]
+
+		all_topk = torch.cat([base_topk, super_topk], dim=1)                           # [Q, C+1, HW, k]
+		scores = torch.sum(torch.sum(all_topk, 3), 2)                                  # [Q, C+1]
+		return scores
+
+
+	def forward(self, x1, x2):
+		return self.cal_cosinesimilarity(x1, x2)
