@@ -1,0 +1,28 @@
+========================================== Start Test ==========================================
+
+=> loading checkpoint './results/SGD_Cosine_Lr0.05_Finetune_DN4_Conv64F_Local_Epoch_3_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar'
+=> loaded checkpoint './results/SGD_Cosine_Lr0.05_Finetune_DN4_Conv64F_Local_Epoch_3_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar' (epoch 2)
+Namespace(dataset_dir='./dataset/miniImageNet', data_name='miniImageNet', mode='train', outf='./results/SGD_Cosine_Lr0.05_Finetune_DN4_Conv64F_Local_Epoch_3_miniImageNet_84_84_5Way_1Shot', resume='./results/SGD_Cosine_Lr0.05_Finetune_DN4_Conv64F_Local_Epoch_2_miniImageNet_84_84_5Way_1Shot/', finetune=True, encoder_model='Conv64F_Local', classifier_model='DN4', workers=4, imageSize=84, train_aug=True, test_aug=False, episodeSize=1, testepisodeSize=1, epochs=3, start_epoch=0, episode_train_num=2000, episode_val_num=500, episode_test_num=1000, way_num=5, shot_num=1, query_num=15, aug_shot_num=20, neighbor_k=3, lr=0.01, cosine=True, lr_decay_epochs=[60, 80], lr_decay_rate=0.1, weight_decay=0.0005, momentum=0.9, adam=False, beta1=0.5, cuda=True, ngpu=1, nc=3, clamp_lower=-0.01, clamp_upper=0.01, print_freq=100, current_epoch=2)
+Fewshot_model(
+  (features): Conv64F_Local(
+    (features): Sequential(
+      (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): LeakyReLU(negative_slope=0.2, inplace=True)
+      (3): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (4): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (5): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (6): LeakyReLU(negative_slope=0.2, inplace=True)
+      (7): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (8): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (9): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (10): LeakyReLU(negative_slope=0.2, inplace=True)
+      (11): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (12): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (13): LeakyReLU(negative_slope=0.2, inplace=True)
+    )
+  )
+  (classifier): ImgtoClass_Metric()
+)
+==================== The 0-th round ====================
+Val-(2): [100/1000]	Time 0.01 (0.05)	Loss 1.31 (1.17)	Prec@1 48.00 (52.48)

@@ -1,0 +1,15 @@
+==================== Three-Way Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/SGD_Cosine_Lr0.05_Finetune_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/', encoder_model='Conv64F_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=84, testepisodeSize=1, episode_test_num=50, query_num=15, way_num=5, shot_num=1, neighbor_k=3, cuda=True, super_gamma=0.6, base_per_super=2, outf='./results/SGD_Cosine_Lr0.05_Finetune_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/')
+=> no checkpoint found at './results/SGD_Cosine_Lr0.05_Finetune_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar'
+ep   0  pred_hist=[0, 2, 2, 5, 2, 0, 2, 2, 0, 2, 0, 2, 0, 0, 2, 2, 3, 2, 0, 0]
+ep   1  pred_hist=[0, 5, 5, 5, 0, 2, 0, 5, 2, 0, 0, 2, 0, 5, 3, 0, 5, 3, 5, 5]
+ep   2  pred_hist=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 2, 1, 3, 1, 3, 2]
+ep  10  pred_hist=[5, 5, 5, 0, 0, 5, 0, 3, 0, 0, 0, 3, 5, 0, 0, 1, 5, 5, 5, 3]
+ep  20  pred_hist=[1, 5, 4, 5, 5, 0, 5, 1, 0, 4, 1, 0, 0, 0, 0, 0, 4, 5, 0, 1]
+ep  30  pred_hist=[5, 5, 1, 1, 1, 5, 5, 2, 1, 1, 1, 5, 5, 5, 1, 5, 5, 1, 5, 5]
+ep  40  pred_hist=[0, 0, 5, 0, 5, 0, 5, 0, 0, 1, 1, 0, 5, 0, 0, 5, 5, 5, 5, 5]
+
+==== Three-Way Summary (50 episodes) ====
+  n02129165             n= 750  acc= 27.20%  argmax_dist=[n02129165:27.2%, n02129604:15.9%, distractor0:11.2%, distractor1:9.2%, distractor2:10.7%, super(liger):25.9%]
+  n02129604             n= 750  acc= 18.27%  argmax_dist=[n02129165:22.3%, n02129604:18.3%, distractor0:9.9%, distractor1:10.3%, distractor2:9.6%, super(liger):29.7%]
+  liger                 n= 800  acc= 25.88%  argmax_dist=[n02129165:29.5%, n02129604:14.2%, distractor0:8.0%, distractor1:11.1%, distractor2:11.2%, super(liger):25.9%]

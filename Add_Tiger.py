@@ -8,7 +8,7 @@ miniImageNet layout expected by this repo:
   dataset/miniImageNet/test.csv                        (600 rows appended)
 
 Source: HuggingFace `evanarlian/imagenet_1k_resized_256` (non-gated mirror,
-images pre-resized to 256px on the shorter side). Streaming mode — we pull
+images pre-resized to 256px on the shorter side). Streaming mode - we pull
 only tiger samples, not the whole 1.28M-image archive.
 
 Idempotent: re-running skips filenames that already exist on disk, and will
@@ -61,41 +61,46 @@ def main():
 	print('existing tiger files on disk :', len(existing_on_disk))
 	print('existing tiger rows in CSV   :', sum(1 for r in existing_rows[1:] if r and r[1] == SYNSET))
 
-	# Stream only tiger samples.
-	from datasets import load_dataset
-	print('streaming {0} split={1}...'.format(args.hf_dataset, args.split))
-	ds = load_dataset(args.hf_dataset, split=args.split, streaming=True)
-	ds = ds.filter(lambda ex: ex['label'] == IMAGENET_TIGER_LABEL)
-
 	saved = 0
 	target = args.num_images
-	idx = 1  # next 8-digit counter (we always start at 1; skip if file present)
 	new_filenames = []
 
-	for example in ds:
-		if saved + len(existing_on_disk) >= target:
-			break
+	if len(existing_on_disk) >= target:
+		print('already at target ({0} on disk >= {1}), skipping download'
+			  .format(len(existing_on_disk), target))
+	else:
+		# Stream only tiger samples.
+		from datasets import load_dataset
+		print('streaming {0} split={1}...'.format(args.hf_dataset, args.split))
+		ds = load_dataset(args.hf_dataset, split=args.split, streaming=True)
+		ds = ds.filter(lambda ex: ex['label'] == IMAGENET_TIGER_LABEL)
 
-		# Find the next available slot on disk.
-		while True:
-			fname = '{0}{1:08d}.jpg'.format(SYNSET, idx)
-			if fname not in existing_on_disk:
+		idx = 1  # next 8-digit counter (we always start at 1; skip if file present)
+
+		for example in ds:
+			if saved + len(existing_on_disk) >= target:
 				break
+
+			# Find the next available slot on disk.
+			while True:
+				fname = '{0}{1:08d}.jpg'.format(SYNSET, idx)
+				if fname not in existing_on_disk:
+					break
+				idx += 1
+
+			img = example['image']
+			if img.mode != 'RGB':
+				img = img.convert('RGB')
+			out_path = os.path.join(images_dir, fname)
+			img.save(out_path, format='JPEG', quality=95)
+
+			existing_on_disk.add(fname)
+			new_filenames.append(fname)
+			saved += 1
 			idx += 1
 
-		img = example['image']
-		if img.mode != 'RGB':
-			img = img.convert('RGB')
-		out_path = os.path.join(images_dir, fname)
-		img.save(out_path, format='JPEG', quality=95)
-
-		existing_on_disk.add(fname)
-		new_filenames.append(fname)
-		saved += 1
-		idx += 1
-
-		if saved % 50 == 0:
-			print('  saved {0}/{1}'.format(saved, target - (target - len(new_filenames))))
+			if saved % 50 == 0:
+				print('  saved {0}/{1}'.format(saved, target))
 
 	print('new tiger images saved       :', saved)
 

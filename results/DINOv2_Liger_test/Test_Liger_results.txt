@@ -1,0 +1,114 @@
+==================== Liger Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/DINOv2_Liger_test/', encoder_model='DINOv2_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=224, testepisodeSize=1, episode_test_num=50, way_num=5, shot_num=1, neighbor_k=3, cuda=True, base_per_super=2, outf='./results/DINOv2_Liger_test/')
+=> no checkpoint found at './results/DINOv2_Liger_test/model_best.pth.tar'
+WARNING: no checkpoint loaded — encoder is random.
+ep   0  super_wins=  1/16  pred_hist=[0, 15, 0, 0, 0, 1]  mean_margin=-82.590
+ep   1  super_wins=  4/16  pred_hist=[0, 11, 0, 0, 1, 4]  mean_margin=-46.088
+ep   2  super_wins=  8/16  pred_hist=[0, 8, 0, 0, 0, 8]  mean_margin=-12.777
+ep  10  super_wins=  3/16  pred_hist=[2, 11, 0, 0, 0, 3]  mean_margin=-33.691
+ep  20  super_wins=  2/16  pred_hist=[0, 14, 0, 0, 0, 2]  mean_margin=-83.518
+ep  30  super_wins= 10/16  pred_hist=[2, 4, 0, 0, 0, 10]  mean_margin=+0.860
+ep  40  super_wins=  7/16  pred_hist=[1, 8, 0, 0, 0, 7]  mean_margin=-19.543
+
+==== Liger summary (50 episodes x 16 queries = 800 total) ====
+super_constituents    : ['n02129165', 'n02129604']
+super_win_rate        : 27.25%
+constituent_leak_rate : 72.12%  (argmax landed on a constituent base col)
+per-column argmax %%   : ['18.9', '53.3', '0.1', '0.1', '0.4', '27.2']
+super - max(base)     : mean=-42.155  median=-38.203  std=55.021
+
+==================== Liger Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/DINOv2_Liger_test/', encoder_model='DINOv2_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=224, testepisodeSize=1, episode_test_num=50, way_num=5, shot_num=1, neighbor_k=3, super_alpha=0.0, cuda=True, base_per_super=2, outf='./results/DINOv2_Liger_test/')
+=> no checkpoint found at './results/DINOv2_Liger_test/model_best.pth.tar'
+WARNING: no checkpoint loaded — encoder is random.
+ep   0  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+19.383
+ep   1  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+21.113
+ep   2  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+20.339
+ep  10  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+21.731
+ep  20  super_wins= 14/16  pred_hist=[0, 1, 1, 0, 0, 14]  mean_margin=+14.185
+ep  30  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+23.610
+ep  40  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+23.216
+
+==== Liger summary (50 episodes x 16 queries = 800 total) ====
+super_constituents    : ['n02129165', 'n02129604']
+super_win_rate        : 98.75%
+constituent_leak_rate : 0.25%  (argmax landed on a constituent base col)
+per-column argmax %%   : ['0.0', '0.2', '0.1', '0.8', '0.1', '98.8']
+super - max(base)     : mean=+17.738  median=+15.715  std=13.659
+
+==================== Liger Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/DINOv2_Liger_test/', encoder_model='DINOv2_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=224, testepisodeSize=1, episode_test_num=50, way_num=5, shot_num=1, neighbor_k=3, super_alpha=0.05, cuda=True, base_per_super=2, outf='./results/DINOv2_Liger_test/')
+=> no checkpoint found at './results/DINOv2_Liger_test/model_best.pth.tar'
+WARNING: no checkpoint loaded — encoder is random.
+ep   0  super_wins= 14/16  pred_hist=[2, 0, 0, 0, 0, 14]  mean_margin=+21.091
+ep   1  super_wins=  5/16  pred_hist=[0, 7, 4, 0, 0, 5]  mean_margin=-5.121
+ep   2  super_wins= 10/16  pred_hist=[6, 0, 0, 0, 0, 10]  mean_margin=+8.467
+ep  10  super_wins= 11/16  pred_hist=[0, 5, 0, 0, 0, 11]  mean_margin=+3.697
+ep  20  super_wins= 14/16  pred_hist=[0, 2, 0, 0, 0, 14]  mean_margin=+10.612
+ep  30  super_wins= 15/16  pred_hist=[1, 0, 0, 0, 0, 15]  mean_margin=+16.915
+ep  40  super_wins= 15/16  pred_hist=[1, 0, 0, 0, 0, 15]  mean_margin=+26.777
+
+==== Liger summary (50 episodes x 16 queries = 800 total) ====
+super_constituents    : ['n02129165', 'n02129604']
+super_win_rate        : 75.62%
+constituent_leak_rate : 22.62%  (argmax landed on a constituent base col)
+per-column argmax %%   : ['7.4', '15.2', '1.5', '0.2', '0.0', '75.6']
+super - max(base)     : mean=+12.042  median=+10.361  std=15.046
+
+==================== Liger Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/DINOv2_Liger_test/', encoder_model='DINOv2_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=224, testepisodeSize=1, episode_test_num=50, way_num=5, shot_num=1, neighbor_k=3, super_alpha=0.1, cuda=True, base_per_super=2, outf='./results/DINOv2_Liger_test/')
+=> no checkpoint found at './results/DINOv2_Liger_test/model_best.pth.tar'
+WARNING: no checkpoint loaded — encoder is random.
+ep   0  super_wins= 12/16  pred_hist=[0, 4, 0, 0, 0, 12]  mean_margin=+14.418
+ep   1  super_wins= 14/16  pred_hist=[0, 2, 0, 0, 0, 14]  mean_margin=+16.997
+ep   2  super_wins=  9/16  pred_hist=[0, 7, 0, 0, 0, 9]  mean_margin=+4.979
+ep  10  super_wins= 11/16  pred_hist=[0, 5, 0, 0, 0, 11]  mean_margin=+5.982
+ep  20  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+24.305
+ep  30  super_wins=  8/16  pred_hist=[7, 1, 0, 0, 0, 8]  mean_margin=+2.193
+ep  40  super_wins= 10/16  pred_hist=[0, 6, 0, 0, 0, 10]  mean_margin=+4.376
+
+==== Liger summary (50 episodes x 16 queries = 800 total) ====
+super_constituents    : ['n02129165', 'n02129604']
+super_win_rate        : 71.62%
+constituent_leak_rate : 27.50%  (argmax landed on a constituent base col)
+per-column argmax %%   : ['4.8', '22.8', '0.4', '0.1', '0.4', '71.6']
+super - max(base)     : mean=+11.178  median=+10.260  std=16.133
+
+==================== Liger Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/DINOv2_Liger_test/', encoder_model='DINOv2_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=224, testepisodeSize=1, episode_test_num=50, way_num=5, shot_num=1, neighbor_k=3, super_alpha=0.2, cuda=True, base_per_super=2, outf='./results/DINOv2_Liger_test/')
+=> no checkpoint found at './results/DINOv2_Liger_test/model_best.pth.tar'
+WARNING: no checkpoint loaded — encoder is random.
+ep   0  super_wins=  4/16  pred_hist=[12, 0, 0, 0, 0, 4]  mean_margin=-10.644
+ep   1  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+36.888
+ep   2  super_wins=  3/16  pred_hist=[12, 0, 1, 0, 0, 3]  mean_margin=-6.030
+ep  10  super_wins= 14/16  pred_hist=[0, 2, 0, 0, 0, 14]  mean_margin=+16.584
+ep  20  super_wins= 12/16  pred_hist=[0, 4, 0, 0, 0, 12]  mean_margin=+6.419
+ep  30  super_wins= 13/16  pred_hist=[0, 3, 0, 0, 0, 13]  mean_margin=+18.139
+ep  40  super_wins= 14/16  pred_hist=[1, 1, 0, 0, 0, 14]  mean_margin=+15.652
+
+==== Liger summary (50 episodes x 16 queries = 800 total) ====
+super_constituents    : ['n02129165', 'n02129604']
+super_win_rate        : 62.88%
+constituent_leak_rate : 34.75%  (argmax landed on a constituent base col)
+per-column argmax %%   : ['12.6', '22.1', '2.0', '0.4', '0.0', '62.9']
+super - max(base)     : mean=+6.381  median=+7.722  std=23.920
+
+==================== Liger Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/DINOv2_Liger_test/', encoder_model='DINOv2_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=224, testepisodeSize=1, episode_test_num=50, way_num=5, shot_num=1, neighbor_k=3, super_alpha=0.3, cuda=True, base_per_super=2, outf='./results/DINOv2_Liger_test/')
+=> no checkpoint found at './results/DINOv2_Liger_test/model_best.pth.tar'
+WARNING: no checkpoint loaded — encoder is random.
+ep   0  super_wins= 13/16  pred_hist=[0, 3, 0, 0, 0, 13]  mean_margin=+15.946
+ep   1  super_wins= 13/16  pred_hist=[1, 2, 0, 0, 0, 13]  mean_margin=+17.280
+ep   2  super_wins=  9/16  pred_hist=[1, 6, 0, 0, 0, 9]  mean_margin=+2.033
+ep  10  super_wins=  8/16  pred_hist=[0, 8, 0, 0, 0, 8]  mean_margin=-0.685
+ep  20  super_wins=  5/16  pred_hist=[0, 11, 0, 0, 0, 5]  mean_margin=-13.821
+ep  30  super_wins= 10/16  pred_hist=[6, 0, 0, 0, 0, 10]  mean_margin=-1.427
+ep  40  super_wins=  3/16  pred_hist=[13, 0, 0, 0, 0, 3]  mean_margin=-10.854
+
+==== Liger summary (50 episodes x 16 queries = 800 total) ====
+super_constituents    : ['n02129165', 'n02129604']
+super_win_rate        : 53.12%
+constituent_leak_rate : 45.75%  (argmax landed on a constituent base col)
+per-column argmax %%   : ['17.1', '28.6', '1.0', '0.1', '0.0', '53.1']
+super - max(base)     : mean=+2.183  median=+2.602  std=24.136
+

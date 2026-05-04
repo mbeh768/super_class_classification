@@ -54,7 +54,6 @@ import utils
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 os.environ['CUDA_DEVICE_ORDER']='PCI_BUS_ID'
-os.environ['CUDA_VISIBLE_DEVICES']='7'
 
 
 
@@ -64,6 +63,7 @@ parser.add_argument('--data_name', default='miniImageNet', help='miniImageNet|St
 parser.add_argument('--mode', default='train', help='train|val|test')
 parser.add_argument('--outf', default='./results/SGD_Cosine_Lr0.05_')
 parser.add_argument('--resume', default='', type=str, help='path to the lastest checkpoint (default: none)')
+parser.add_argument('--finetune', action='store_true', default=False, help='load encoder weights from --resume, keep start_epoch=0 and fresh optimizer, write to a new _finetune output dir')
 parser.add_argument('--encoder_model', default='Conv64F_Local', help='Conv64F|Conv64F_Local|ResNet10|ResNet12|ResNet18')
 parser.add_argument('--classifier_model', default='DN4', help='ProtoNet | RelationNet | CovaMNet | DN4')
 parser.add_argument('--workers', type=int, default=4)
@@ -99,8 +99,13 @@ parser.add_argument('--clamp_lower', type=float, default=-0.01)
 parser.add_argument('--clamp_upper', type=float, default=0.01)
 parser.add_argument('--print_freq', '-p', default=100, type=int, help='print frequency (default: 100)')
 opt = parser.parse_args()
-opt.cuda = True
-cudnn.benchmark = True
+opt.cuda = opt.cuda and torch.cuda.is_available()
+device = torch.device('cuda' if opt.cuda else 'cpu')
+cudnn.benchmark = opt.cuda
+if opt.cuda:
+    print('Using CUDA: %s (device %d)' % (torch.cuda.get_device_name(0), torch.cuda.current_device()))
+else:
+    print('WARNING: running on CPU — no CUDA available')
 
 
 
@@ -120,13 +125,13 @@ def train(train_loader, model, criterion, optimizer, epoch_index, F_txt):
 		data_time.update(time.time() - end)
 
 		# Convert query and support images
-		input_var1 = torch.cat(query_images, 0).cuda()
-		input_var2 = torch.cat(support_images, 0).squeeze(0).cuda()
+		input_var1 = torch.cat(query_images, 0).to(device)
+		input_var2 = torch.cat(support_images, 0).squeeze(0).to(device)
 		input_var2 = input_var2.contiguous().view(-1, input_var2.size(2), input_var2.size(3), input_var2.size(4))
 
 
 		# Deal with the targets
-		target = torch.cat(query_targets, 0).cuda()
+		target = torch.cat(query_targets, 0).to(device)
 
 		
 		# Calculate the output
@@ -188,13 +193,13 @@ def validate(val_loader, model, criterion, epoch_index, best_prec1, F_txt):
 
 
 		# Convert query and support images
-		input_var1 = torch.cat(query_images, 0).cuda()
-		input_var2 = torch.cat(support_images, 0).squeeze(0).cuda()
+		input_var1 = torch.cat(query_images, 0).to(device)
+		input_var2 = torch.cat(support_images, 0).squeeze(0).to(device)
 		input_var2 = input_var2.contiguous().view(-1, input_var2.size(2), input_var2.size(3), input_var2.size(4))
 
 
 		# Deal with the targets
-		target = torch.cat(query_targets, 0).cuda()
+		target = torch.cat(query_targets, 0).to(device)
 
 	
 		# Calculate the output
@@ -240,7 +245,9 @@ def validate(val_loader, model, criterion, epoch_index, best_prec1, F_txt):
 
 if __name__=='__main__':
 
-	# save path
+	# save path (tag fine-tune runs so they don't clobber the base checkpoint)
+	if opt.finetune:
+		opt.outf = opt.outf + 'Finetune_'
 	opt.outf, F_txt = utils.set_save_path(opt)
 
 	# Check if the cuda is available
@@ -254,7 +261,7 @@ if __name__=='__main__':
 			way_num=opt.way_num, shot_num=opt.shot_num, init_type='normal', use_gpu=opt.cuda)
 
 	# define loss function (criterion) and optimizer
-	criterion = nn.CrossEntropyLoss().cuda()
+	criterion = nn.CrossEntropyLoss().to(device)
 	if opt.adam:
 		optimizer = optim.Adam(model.parameters(), lr=opt.lr, betas=(opt.beta1, 0.9), weight_decay=0.0005)
 		print("Using Adam Optimizer")
@@ -265,11 +272,29 @@ if __name__=='__main__':
 
 	# optionally resume from a checkpoint
 	if opt.resume:
-		checkpoint = utils.get_resume_file(opt.resume, F_txt)
-		opt.start_epoch = checkpoint['epoch']
-		best_prec1 = checkpoint['best_prec1']
-		model.load_state_dict(checkpoint['state_dict'])
-		optimizer.load_state_dict(checkpoint['optimizer'])
+		# Accept either a directory (containing model_best.pth.tar) or a direct file path.
+		resume_path = opt.resume
+		if os.path.isdir(resume_path):
+			resume_path = os.path.join(resume_path, 'model_best.pth.tar')
+		checkpoint = utils.get_resume_file(resume_path, F_txt)
+		# Checkpoint schema (see saved dict in this script): keys are
+		#   'epoch_index', 'model', 'best_prec1', 'optimizer', ...
+		state = checkpoint.get('model', checkpoint.get('state_dict'))
+		missing, unexpected = model.load_state_dict(
+			{k: v.to(device) for k, v in state.items()}, strict=False)
+		print('resume missing   :', missing, file=F_txt)
+		print('resume unexpected:', unexpected, file=F_txt)
+		best_prec1 = checkpoint.get('best_prec1', best_prec1)
+		if opt.finetune:
+			# Fresh optimizer + fresh epoch counter; only the encoder weights
+			# are inherited. Trainer runs 0..opt.epochs with the user-supplied lr.
+			best_prec1 = 0  # reset so model_best saves from first improving epoch
+			print('FINETUNE: loaded encoder weights only; start_epoch=0, fresh optimizer')
+			print('FINETUNE: loaded encoder weights only; start_epoch=0, fresh optimizer', file=F_txt)
+		else:
+			opt.start_epoch = checkpoint.get('epoch_index', checkpoint.get('epoch', 0))
+			if 'optimizer' in checkpoint:
+				optimizer.load_state_dict(checkpoint['optimizer'])
 
 	if opt.ngpu > 1:
 		model = nn.DataParallel(model, range(opt.ngpu))
@@ -349,7 +374,7 @@ if __name__=='__main__':
 					'optimizer' : optimizer.state_dict(),
 				}, os.path.join(opt.outf, 'model_best.pth.tar'))
 
-		if epoch_item % 10 == 0:
+		if epoch_item % 3 == 0:
 			filename = os.path.join(opt.outf, 'epoch_%d.pth.tar' %epoch_item)
 			utils.save_checkpoint(
 				{

@@ -55,7 +55,6 @@ import utils
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 os.environ['CUDA_DEVICE_ORDER']='PCI_BUS_ID'
-os.environ['CUDA_VISIBLE_DEVICES']='6'
 
 
 model_trained = './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/'
@@ -102,8 +101,9 @@ parser.add_argument('--clamp_lower', type=float, default=-0.01)
 parser.add_argument('--clamp_upper', type=float, default=0.01)
 parser.add_argument('--print_freq', '-p', default=100, type=int, help='print frequency (default: 100)')
 opt = parser.parse_args()
-opt.cuda = True
-cudnn.benchmark = True
+opt.cuda = opt.cuda and torch.cuda.is_available()
+device = torch.device('cuda' if opt.cuda else 'cpu')
+cudnn.benchmark = opt.cuda
 
 
 
@@ -123,13 +123,13 @@ def test(test_loader, model, criterion, epoch_index, best_prec1, F_txt):
 
 
 		# Convert query and support images
-		input_var1 = torch.cat(query_images, 0).cuda()
-		input_var2 = torch.cat(support_images, 0).squeeze(0).cuda()
+		input_var1 = torch.cat(query_images, 0).to(device)
+		input_var2 = torch.cat(support_images, 0).squeeze(0).to(device)
 		input_var2 = input_var2.contiguous().view(-1, input_var2.size(2), input_var2.size(3), input_var2.size(4))
 
 
 		# Deal with the targets
-		target = torch.cat(query_targets, 0).cuda()
+		target = torch.cat(query_targets, 0).to(device)
 
 	
 		# Calculate the output
@@ -178,7 +178,7 @@ if __name__=='__main__':
 			way_num=opt.way_num, shot_num=opt.shot_num, init_type='normal', use_gpu=opt.cuda)
 
 	# define loss function (criterion) and optimizer
-	criterion = nn.CrossEntropyLoss().cuda()
+	criterion = nn.CrossEntropyLoss().to(device)
 
 	# ============================================ Test phase ============================================
 	# Set the save path
@@ -191,7 +191,7 @@ if __name__=='__main__':
 	checkpoint = utils.get_resume_file(best_model_path, F_txt_test)
 	epoch_index = checkpoint['epoch_index']
 	best_prec1 = checkpoint['best_prec1']
-	model.load_state_dict(checkpoint['model'])
+	model.load_state_dict({k: v.to(device) for k, v in checkpoint['model'].items()})
 
 
 	# print the parameters and architecture of the model

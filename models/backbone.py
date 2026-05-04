@@ -591,6 +591,40 @@ def ResNet101(flatten = False):
 	return ResNet_224(BottleneckBlock, [3,4,23,3],[256,512,1024,2048], flatten)
 
 
+##############################################################################
+# Embedding backbone: frozen DINOv2 ViT-S/14
+#
+# Input:  [B, 3, 224, 224]  (pass --imageSize 224)
+# Output: [B, 384, 16, 16]  (256 patch tokens reshaped to spatial grid)
+#
+# The dataloader normalises with (0.5,0.5,0.5)/(0.5,0.5,0.5).  DINOv2 expects
+# ImageNet stats, so we undo-and-redo the normalisation inside forward().
+##############################################################################
+
+class DINOv2_Local(nn.Module):
+	def __init__(self):
+		super(DINOv2_Local, self).__init__()
+		self.dino = torch.hub.load('facebookresearch/dinov2', 'dinov2_vits14', pretrained=True)
+		for p in self.dino.parameters():
+			p.requires_grad_(False)
+		self.dino.eval()
+
+		# ImageNet normalisation stats — registered as buffers so .cuda() moves them
+		self.register_buffer('dino_mean', torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1))
+		self.register_buffer('dino_std',  torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1))
+
+	def forward(self, x):
+		# x in [-1, 1] (from (0.5,0.5,0.5) normalisation) → remap to ImageNet stats
+		x = (x * 0.5 + 0.5 - self.dino_mean) / self.dino_std   # [B, 3, 224, 224]
+
+		features = self.dino.forward_features(x)
+		patch_tokens = features['x_norm_patchtokens']            # [B, 256, 384]
+
+		B, N, D = patch_tokens.shape
+		h = w = int(N ** 0.5)                                    # 16 for 224/14
+		return patch_tokens.permute(0, 2, 1).contiguous().view(B, D, h, w)  # [B, 384, 16, 16]
+
+
 
 
 

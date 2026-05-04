@@ -35,7 +35,8 @@ encoder_dict = dict(
 			ResNet18      = backbone.ResNet18,
 			ResNet34      = backbone.ResNet34,
 			ResNet50      = backbone.ResNet50,
-			ResNet101     = backbone.ResNet101) 
+			ResNet101     = backbone.ResNet101,
+			DINOv2_Local  = backbone.DINOv2_Local)
 
 
 classifier_dict = dict(
@@ -180,6 +181,8 @@ class Fewshot_model(nn.Module):
 			self.feature_dim = 640
 		elif encoder_model in ['ResNet50', 'ResNet101']:
 			self.feature_dim = 2048
+		elif encoder_model == 'DINOv2_Local':
+			self.feature_dim = 384
 		
 		encoder_module    = encoder_dict[self.encoder_model]
 		classifier_module = classifier_dict[self.classifier_model]
@@ -188,14 +191,17 @@ class Fewshot_model(nn.Module):
 		self.classifier = classifier_module(way_num=self.way_num, shot_num=self.shot_num, neighbor_k=self.neighbor_k)
 	
 
-		for m in self.modules():
-			if isinstance(m, nn.Conv1d):
-				init.normal_(m.weight.data, 0.0, 0.02)
-			elif isinstance(m, nn.Linear):
-				init.normal_(m.weight.data, 0.0, 0.02)
-			elif isinstance(m, nn.BatchNorm2d):
-				init.normal_(m.weight.data, 1.0, 0.02)
-				init.constant_(m.bias.data, 0.0)
+		# DINOv2 loads its own pretrained weights; skip the blanket reinit so
+		# its transformer layers are not overwritten with random values.
+		if encoder_model != 'DINOv2_Local':
+			for m in self.modules():
+				if isinstance(m, nn.Conv1d):
+					init.normal_(m.weight.data, 0.0, 0.02)
+				elif isinstance(m, nn.Linear):
+					init.normal_(m.weight.data, 0.0, 0.02)
+				elif isinstance(m, nn.BatchNorm2d):
+					init.normal_(m.weight.data, 1.0, 0.02)
+					init.constant_(m.bias.data, 0.0)
 
 
 	def forward(self, input1, input2, is_feature=False):

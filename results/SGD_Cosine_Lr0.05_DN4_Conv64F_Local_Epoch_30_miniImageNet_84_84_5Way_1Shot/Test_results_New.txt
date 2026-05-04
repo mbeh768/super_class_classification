@@ -77,3 +77,90 @@ Test accuracy: 51.654667 h: 0.620802
 Mean_accuracy: 51.740801 h: 0.627438
 ===================================== Test is END =====================================
 
+========================================== Start Test ==========================================
+
+=> loading checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar'
+=> loaded checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar' (epoch 29)
+Namespace(dataset_dir='./dataset/miniImageNet', data_name='miniImageNet', mode='test', outf='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/', resume='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/', encoder_model='Conv64F_Local', classifier_model='DN4', workers=4, imageSize=84, train_aug=True, test_aug=False, episodeSize=1, testepisodeSize=1, epochs=30, start_epoch=0, episode_train_num=10000, episode_val_num=1000, episode_test_num=1000, way_num=5, shot_num=1, query_num=15, aug_shot_num=20, neighbor_k=3, lr=0.05, cosine=True, lr_decay_epochs=[60, 80], lr_decay_rate=0.1, weight_decay=0.0005, momentum=0.9, adam=False, beta1=0.5, cuda=True, ngpu=1, nc=3, clamp_lower=-0.01, clamp_upper=0.01, print_freq=100)
+==================== The 0-th round ====================
+Test-(29): [100/1000]	Time 0.008 (0.050)	Loss 1.109 (1.180)	Prec@1 49.333 (51.802)
+Test-(29): [200/1000]	Time 0.037 (0.048)	Loss 0.983 (1.153)	Prec@1 54.667 (53.174)
+Test-(29): [300/1000]	Time 0.008 (0.047)	Loss 0.979 (1.152)	Prec@1 62.667 (53.107)
+Test-(29): [400/1000]	Time 0.008 (0.047)	Loss 0.954 (1.152)	Prec@1 57.333 (53.307)
+Test-(29): [500/1000]	Time 0.035 (0.047)	Loss 1.059 (1.149)	Prec@1 64.000 (53.445)
+Test-(29): [600/1000]	Time 0.095 (0.047)	Loss 1.314 (1.153)	Prec@1 46.667 (53.267)
+Test-(29): [700/1000]	Time 0.009 (0.047)	Loss 1.167 (1.147)	Prec@1 46.667 (53.514)
+Test-(29): [800/1000]	Time 0.008 (0.047)	Loss 1.289 (1.153)	Prec@1 46.667 (53.207)
+Test-(29): [900/1000]	Time 0.174 (0.047)	Loss 1.040 (1.155)	Prec@1 56.000 (53.230)
+ * Prec@1 53.196 Best_prec1 50.331
+Test accuracy: 53.195999 h: 0.649440 
+
+==================== The 1-th round ====================
+Test-(29): [100/1000]	Time 0.008 (0.048)	Loss 0.936 (1.132)	Prec@1 65.333 (54.086)
+Test-(29): [200/1000]	Time 0.048 (0.048)	Loss 0.976 (1.112)	Prec@1 64.000 (54.740)
+Test-(29): [300/1000]	Time 0.008 (0.047)	Loss 1.056 (1.123)	Prec@1 60.000 (54.396)
+Test-(29): [400/1000]	Time 0.009 (0.047)	Loss 0.945 (1.130)	Prec@1 65.333 (54.161)
+Test-(29): [500/1000]	Time 0.008 (0.047)	Loss 1.064 (1.139)	Prec@1 54.667 (53.874)
+Test-(29): [600/1000]	Time 0.073 (0.047)	Loss 0.752 (1.138)	Prec@1 73.333 (53.966)
+Test-(29): [700/1000]	Time 0.008 (0.047)	Loss 1.410 (1.136)	Prec@1 40.000 (53.990)
+Test-(29): [800/1000]	Time 0.044 (0.047)	Loss 1.303 (1.139)	Prec@1 52.000 (53.804)
+Test-(29): [900/1000]	Time 0.163 (0.047)	Loss 1.112 (1.143)	Prec@1 46.667 (53.646)
+ * Prec@1 53.532 Best_prec1 50.331
+Test accuracy: 53.532001 h: 0.650212 
+
+==================== The 2-th round ====================
+Test-(29): [100/1000]	Time 0.008 (0.050)	Loss 1.030 (1.151)	Prec@1 64.000 (53.611)
+Test-(29): [200/1000]	Time 0.008 (0.050)	Loss 0.999 (1.143)	Prec@1 61.333 (54.415)
+Test-(29): [300/1000]	Time 0.008 (0.049)	Loss 1.078 (1.138)	Prec@1 62.667 (54.485)
+Test-(29): [400/1000]	Time 0.008 (0.049)	Loss 1.153 (1.137)	Prec@1 44.000 (54.404)
+Test-(29): [500/1000]	Time 0.008 (0.048)	Loss 1.009 (1.136)	Prec@1 64.000 (54.273)
+Test-(29): [600/1000]	Time 0.008 (0.048)	Loss 1.385 (1.132)	Prec@1 36.000 (54.478)
+Test-(29): [700/1000]	Time 0.010 (0.048)	Loss 1.040 (1.136)	Prec@1 62.667 (54.317)
+Test-(29): [800/1000]	Time 0.052 (0.048)	Loss 0.954 (1.137)	Prec@1 65.333 (54.324)
+Test-(29): [900/1000]	Time 0.010 (0.048)	Loss 0.849 (1.139)	Prec@1 77.333 (54.294)
+ * Prec@1 54.347 Best_prec1 50.331
+Test accuracy: 54.346668 h: 0.660167 
+
+==================== The 3-th round ====================
+Test-(29): [100/1000]	Time 0.029 (0.048)	Loss 1.206 (1.131)	Prec@1 41.333 (55.406)
+Test-(29): [200/1000]	Time 0.185 (0.048)	Loss 1.269 (1.140)	Prec@1 50.667 (54.229)
+Test-(29): [300/1000]	Time 0.188 (0.048)	Loss 0.933 (1.134)	Prec@1 57.333 (54.020)
+Test-(29): [400/1000]	Time 0.070 (0.047)	Loss 1.129 (1.139)	Prec@1 58.667 (53.829)
+Test-(29): [500/1000]	Time 0.008 (0.047)	Loss 1.198 (1.143)	Prec@1 45.333 (53.546)
+Test-(29): [600/1000]	Time 0.082 (0.047)	Loss 1.167 (1.151)	Prec@1 54.667 (53.242)
+Test-(29): [700/1000]	Time 0.025 (0.047)	Loss 1.316 (1.150)	Prec@1 38.667 (53.330)
+Test-(29): [800/1000]	Time 0.008 (0.047)	Loss 1.064 (1.152)	Prec@1 54.667 (53.293)
+Test-(29): [900/1000]	Time 0.010 (0.047)	Loss 1.258 (1.155)	Prec@1 50.667 (53.144)
+========================================== Start Test ==========================================
+
+=> loading checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar'
+=> loaded checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar' (epoch 29)
+Namespace(dataset_dir='./dataset/miniImageNet', data_name='miniImageNet', mode='test', outf='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/', resume='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/', encoder_model='Conv64F_Local', classifier_model='DN4', workers=4, imageSize=84, train_aug=True, test_aug=False, episodeSize=1, testepisodeSize=1, epochs=30, start_epoch=0, episode_train_num=10000, episode_val_num=1000, episode_test_num=200, way_num=5, shot_num=1, query_num=15, aug_shot_num=20, neighbor_k=3, lr=0.05, cosine=True, lr_decay_epochs=[60, 80], lr_decay_rate=0.1, weight_decay=0.0005, momentum=0.9, adam=False, beta1=0.5, cuda=True, ngpu=1, nc=3, clamp_lower=-0.01, clamp_upper=0.01, print_freq=100)
+==================== The 0-th round ====================
+Test-(29): [100/200]	Time 0.015 (0.052)	Loss 1.054 (1.131)	Prec@1 66.667 (54.667)
+ * Prec@1 54.473 Best_prec1 51.616
+Test accuracy: 54.473335 h: 1.435450 
+
+==================== The 1-th round ====================
+Test-(29): [100/200]	Time 0.101 (0.054)	Loss 1.158 (1.125)	Prec@1 50.667 (54.957)
+ * Prec@1 54.940 Best_prec1 51.616
+Test accuracy: 54.939999 h: 1.434348 
+
+==================== The 2-th round ====================
+Test-(29): [100/200]	Time 0.300 (0.053)	Loss 0.970 (1.117)	Prec@1 61.333 (54.759)
+ * Prec@1 54.107 Best_prec1 51.616
+Test accuracy: 54.106670 h: 1.495653 
+
+==================== The 3-th round ====================
+Test-(29): [100/200]	Time 0.010 (0.055)	Loss 0.966 (1.166)	Prec@1 60.000 (53.861)
+ * Prec@1 53.427 Best_prec1 51.616
+Test accuracy: 53.426666 h: 1.363986 
+
+==================== The 4-th round ====================
+Test-(29): [100/200]	Time 0.123 (0.057)	Loss 1.392 (1.180)	Prec@1 41.333 (51.802)
+ * Prec@1 51.847 Best_prec1 51.616
+Test accuracy: 51.846668 h: 1.500386 
+
+Mean_accuracy: 53.758667 h: 1.445965
+===================================== Test is END =====================================
+

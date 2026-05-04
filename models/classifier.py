@@ -123,26 +123,44 @@ class ImgtoClass_Metric(nn.Module):
 # =========================== Zero-shot Super-Class on top of DN4 =========================== #
 class ImgtoSuperClass_Metric(nn.Module):
 	'''
-		Extends DN4 with one extra "super-class" score formed by pooling the local
-		descriptors of the first `base_per_super` base classes of the episode. No
-		training or supervision is added; the super-class score is computed from the
-		exact same supports DN4 already uses.
+		Extends DN4 with one extra "super-class" score. The super column pools
+		local descriptors from the first `base_per_super` base classes into a
+		single bank, runs k-NN against it, then subtracts the spread of
+		constituent scores.
 
-		Output shape: (Q, way_num + 1). Columns [0..way_num) are the standard DN4
-		base-class scores. Column `way_num` is the super-class score.
+		Output shape: (Q, way_num + 1). Columns [0..way_num) are standard DN4
+		base scores. Column `way_num` is the adjusted super-class score:
 
-		Geometric rationale: the super-class descriptor bank is the union of its
-		constituents' banks, so a query from a constituent class gets top-k matches
-		that are a superset of that class's top-k — super_score >= constituent_score.
-		A query from a non-constituent class gets top-k inside an unrelated bank, so
-		the true class should still win.
+		    super_raw  = k-NN score over the union of constituent descriptors
+		    spread     = max(constituent_scores) - min(constituent_scores)
+		    super_adj  = super_raw - spread
+
+		Why subtract the spread:
+		  * The union bank is a superset of each constituent bank, so
+		    super_raw >= max(constituent_score) always. Using super_raw alone
+		    (original design) made super tie-or-beat the winning constituent on
+		    every query, i.e. super stole everything.
+		  * For a pure-constituent query (e.g. pure lion) the top-k over the
+		    union is dominated by that one constituent's descriptors, so
+		    super_raw ~= winning constituent score, and the OTHER constituent's
+		    score is much lower -> large spread -> super_adj collapses toward
+		    the loser's score and the true class wins.
+		  * For a balanced super-class query (e.g. liger) both constituent
+		    scores are similar -> spread ~= 0 -> super_adj ~= super_raw. The
+		    union also picks up cross-constituent matches the individual banks
+		    miss, so super_raw typically exceeds max(constituent_score), letting
+		    super win exactly when constituents are balanced.
 	'''
-	def __init__(self, way_num=5, shot_num=5, neighbor_k=3, base_per_super=2):
+	def __init__(self, way_num=5, shot_num=5, neighbor_k=3, base_per_super=2, super_alpha=1.0):
 		super(ImgtoSuperClass_Metric, self).__init__()
 		self.way_num = way_num
 		self.shot_num = shot_num
 		self.neighbor_k = neighbor_k
 		self.base_per_super = base_per_super
+		# Scales the spread penalty: 0.0 = no penalty, 1.0 = full subtraction.
+		# Lower values help when the backbone produces asymmetric constituent scores
+		# for a visually-unbalanced hybrid (e.g. ligers look more tiger than lion).
+		self.super_alpha = super_alpha
 
 
 	def cal_cosinesimilarity(self, input1, input2):
@@ -160,17 +178,26 @@ class ImgtoSuperClass_Metric(nn.Module):
 		# Standard DN4 base-class scores
 		base_sim = torch.matmul(query, support)                                        # [Q, C, HW, shot*HW]
 		base_topk, _ = torch.topk(base_sim, self.neighbor_k, 3)                        # [Q, C, HW, k]
+		base_scores = torch.sum(torch.sum(base_topk, 3), 2)                            # [Q, C]
 
-		# Super-class: pool the first `base_per_super` classes' descriptors into one bank
+		# Super-class raw: k-NN over the union of the first `base_per_super` classes'
+		# descriptor banks.
 		d = support.size(1)
 		super_bank = support[:self.base_per_super].permute(1, 0, 2).contiguous().view(d, -1).unsqueeze(0)
-		# [1, d, base_per_super * shot * HW]
+		# [1, d, bps * shot * HW]
 		super_sim = torch.matmul(query, super_bank)                                    # [Q, 1, HW, bps*shot*HW]
 		super_topk, _ = torch.topk(super_sim, self.neighbor_k, 3)                      # [Q, 1, HW, k]
+		super_raw = torch.sum(torch.sum(super_topk, 3), 2)                             # [Q, 1]
 
-		all_topk = torch.cat([base_topk, super_topk], dim=1)                           # [Q, C+1, HW, k]
-		scores = torch.sum(torch.sum(all_topk, 3), 2)                                  # [Q, C+1]
-		return scores
+		# Penalize the super score by the gap between the strongest and weakest
+		# constituent: pure-constituent queries have a large gap and drop out;
+		# balanced super queries have a small gap and stay near super_raw.
+		constituent_scores = base_scores[:, :self.base_per_super]                      # [Q, bps]
+		spread = (constituent_scores.max(dim=1, keepdim=True).values
+				  - constituent_scores.min(dim=1, keepdim=True).values)                # [Q, 1]
+		super_scores = super_raw - self.super_alpha * spread                          # [Q, 1]
+
+		return torch.cat([base_scores, super_scores], dim=1)                           # [Q, C+1]
 
 
 	def forward(self, x1, x2):

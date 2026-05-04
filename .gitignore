@@ -3,3 +3,11 @@ CLAUDE.md
 
 # imagenet cookie
 cookie.txt
+
+# datasets
+dataset/
+griffins/
+ligers/
+
+# model weights
+results/

@@ -31,7 +31,6 @@ import utils
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
-os.environ.setdefault('CUDA_VISIBLE_DEVICES', '6')
 
 
 model_trained = './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/'
@@ -57,8 +56,15 @@ parser.add_argument('--way_num', type=int, default=5)
 parser.add_argument('--shot_num', type=int, default=1)
 parser.add_argument('--neighbor_k', type=int, default=3)
 parser.add_argument('--cuda', action='store_true', default=True)
+parser.add_argument('--super_alpha', type=float, default=1.0,
+                    help='spread-penalty coefficient: 0=no penalty, 1=full (default 1.0); '
+                         'lower values help when the hybrid is visually asymmetric')
+parser.add_argument('--super_gamma', type=float, default=0.6,
+                    help='legacy parameter, unused in current scoring')
 opt = parser.parse_args()
-cudnn.benchmark = True
+opt.cuda = opt.cuda and torch.cuda.is_available()
+device = torch.device('cuda' if opt.cuda else 'cpu')
+cudnn.benchmark = opt.cuda
 
 opt.base_per_super = len(opt.super_constituents)
 
@@ -84,6 +90,8 @@ def main():
         use_gpu=opt.cuda,
     )
     model.classifier.base_per_super = opt.base_per_super
+    model.classifier.super_alpha = opt.super_alpha
+    model.classifier.super_gamma = opt.super_gamma
 
     opt.outf = opt.resume if str(opt.resume).endswith('/') else opt.resume + '/'
     os.makedirs(opt.outf, exist_ok=True)
@@ -95,7 +103,8 @@ def main():
     best_path = os.path.join(opt.resume, 'model_best.pth.tar')
     checkpoint = utils.get_resume_file(best_path, F_txt)
     if checkpoint is not None:
-        missing, unexpected = model.load_state_dict(checkpoint['model'], strict=False)
+        missing, unexpected = model.load_state_dict(
+            {k: v.to(device) for k, v in checkpoint['model'].items()}, strict=False)
         print('missing keys   :', missing)
         print('unexpected keys:', unexpected)
     else:
@@ -120,8 +129,8 @@ def main():
 
     with torch.no_grad():
         for ep, (query_images, query_targets, support_images, support_targets) in enumerate(test_loader):
-            input1 = torch.cat(query_images, 0).cuda()
-            input2 = torch.cat(support_images, 0).squeeze(0).cuda()
+            input1 = torch.cat(query_images, 0).to(device)
+            input2 = torch.cat(support_images, 0).squeeze(0).to(device)
             input2 = input2.contiguous().view(-1, input2.size(2), input2.size(3), input2.size(4))
             targets = torch.tensor(query_targets).long()
 

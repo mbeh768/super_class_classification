@@ -39,7 +39,6 @@ import utils
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
-os.environ.setdefault('CUDA_VISIBLE_DEVICES', '6')
 
 
 model_trained = './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/'
@@ -70,7 +69,9 @@ parser.add_argument('--repeat_num', type=int, default=5)
 parser.add_argument('--cuda', action='store_true', default=True)
 parser.add_argument('--print_freq', '-p', default=100, type=int)
 opt = parser.parse_args()
-cudnn.benchmark = True
+opt.cuda = opt.cuda and torch.cuda.is_available()
+device = torch.device('cuda' if opt.cuda else 'cpu')
+cudnn.benchmark = opt.cuda
 
 
 # ============================ Evaluation loop ============================ #
@@ -89,10 +90,10 @@ def test_superclass(test_loader, model, criterion, F_txt):
 	end = time.time()
 	for ep, (query_images, query_targets, support_images, support_targets) in enumerate(test_loader):
 
-		input1 = torch.cat(query_images, 0).cuda()
-		input2 = torch.cat(support_images, 0).squeeze(0).cuda()
+		input1 = torch.cat(query_images, 0).to(device)
+		input2 = torch.cat(support_images, 0).squeeze(0).to(device)
 		input2 = input2.contiguous().view(-1, input2.size(2), input2.size(3), input2.size(4))
-		target = torch.cat(query_targets, 0).cuda()
+		target = torch.cat(query_targets, 0).to(device)
 
 		output = model(input1, input2)                      # [Q, way_num+1]
 		loss = criterion(output[:, :opt.way_num], target)   # CE on base cols only
@@ -164,7 +165,7 @@ if __name__ == '__main__':
 	# classifier_module was instantiated with default base_per_super; override here.
 	model.classifier.base_per_super = opt.base_per_super
 
-	criterion = nn.CrossEntropyLoss().cuda()
+	criterion = nn.CrossEntropyLoss().to(device)
 
 	# Output / log file (alongside the checkpoint)
 	opt.outf = opt.resume if str(opt.resume).endswith('/') else opt.resume + '/'
@@ -183,7 +184,8 @@ if __name__ == '__main__':
 		# The trained classifier head (DN4) has no parameters, so missing/extra
 		# keys between DN4 and DN4_SuperClass heads are benign. Use strict=False
 		# to tolerate the head-name difference.
-		missing, unexpected = model.load_state_dict(checkpoint['model'], strict=False)
+		missing, unexpected = model.load_state_dict(
+			{k: v.to(device) for k, v in checkpoint['model'].items()}, strict=False)
 		print('missing keys   :', missing)
 		print('unexpected keys:', unexpected)
 		print('missing keys   :', missing, file=F_txt)

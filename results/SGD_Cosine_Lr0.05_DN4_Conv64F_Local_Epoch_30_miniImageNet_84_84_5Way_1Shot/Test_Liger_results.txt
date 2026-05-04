@@ -1,0 +1,40 @@
+==================== Liger Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/', encoder_model='Conv64F_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=84, testepisodeSize=1, episode_test_num=50, way_num=5, shot_num=1, neighbor_k=3, cuda=True, base_per_super=2, outf='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/')
+=> loading checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar'
+=> loaded checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar' (epoch 29)
+missing keys   : []
+unexpected keys: []
+==================== Liger Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/', encoder_model='Conv64F_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=84, testepisodeSize=1, episode_test_num=50, way_num=5, shot_num=1, neighbor_k=3, cuda=True, base_per_super=2, outf='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/')
+=> loading checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar'
+=> loaded checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar' (epoch 29)
+missing keys   : []
+unexpected keys: []
+==================== Liger Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/', encoder_model='Conv64F_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=84, testepisodeSize=1, episode_test_num=50, way_num=5, shot_num=1, neighbor_k=3, cuda=True, base_per_super=2, outf='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/')
+=> loading checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar'
+=> loaded checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar' (epoch 29)
+missing keys   : []
+unexpected keys: []
+ep   0  super_wins= 14/16  pred_hist=[0, 0, 0, 0, 2, 14]  mean_margin=+1.102
+==================== Liger Test ====================
+Namespace(dataset_dir='./dataset/miniImageNet', query_dir='./ligers/scraped', super_constituents=['n02129165', 'n02129604'], mode='test', resume='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/', encoder_model='Conv64F_Local', classifier_model='DN4_SuperClass', workers=2, imageSize=84, testepisodeSize=1, episode_test_num=50, way_num=5, shot_num=1, neighbor_k=3, cuda=True, base_per_super=2, outf='./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/')
+=> loading checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar'
+=> loaded checkpoint './results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_30_miniImageNet_84_84_5Way_1Shot/model_best.pth.tar' (epoch 29)
+missing keys   : []
+unexpected keys: []
+ep   0  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+1.299
+ep   1  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+1.672
+ep   2  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+1.720
+ep  10  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+1.249
+ep  20  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+1.202
+ep  30  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+1.102
+ep  40  super_wins= 16/16  pred_hist=[0, 0, 0, 0, 0, 16]  mean_margin=+1.673
+
+==== Liger summary (50 episodes x 16 queries = 800 total) ====
+super_constituents    : ['n02129165', 'n02129604']
+super_win_rate        : 99.12%
+constituent_leak_rate : 0.00%  (argmax landed on a constituent base col)
+per-column argmax %%   : ['0.0', '0.0', '0.0', '0.4', '0.5', '99.1']
+super - max(base)     : mean=+1.410  median=+1.430  std=0.438
+
