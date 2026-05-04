@@ -1,0 +1,66 @@
+=== alpha=0.1 ===
+[1/11]  base1=water  base2=cottage  super=boathouse
+    water                     n= 750 acc= 31.07%  dist=[31.1, 0.4, 1.3, 2.0, 2.4, 62.8]
+    cottage                   n= 750 acc= 35.87%  dist=[0.1, 35.9, 2.7, 4.8, 2.7, 53.9]
+    boathouse                 n= 750 acc= 74.53%  dist=[13.1, 2.3, 2.7, 4.0, 3.5, 74.5]
+[2/11]  base1=water  base2=house  super=boathouse
+    water                     n= 750 acc= 34.00%  dist=[34.0, 0.3, 3.9, 3.3, 1.5, 57.1]
+    house                     n= 750 acc= 34.67%  dist=[0.4, 34.7, 7.1, 2.3, 3.5, 52.1]
+    boathouse                 n= 750 acc= 63.33%  dist=[26.7, 1.6, 3.6, 2.9, 1.9, 63.3]
+[3/11]  base1=ocean  base2=cottage  super=boathouse
+    ocean                     n= 750 acc= 48.13%  dist=[48.1, 0.7, 6.3, 7.3, 4.4, 33.2]
+    cottage                   n= 750 acc= 63.73%  dist=[0.0, 63.7, 2.4, 8.0, 8.0, 17.9]
+    boathouse                 n= 750 acc= 53.60%  dist=[4.1, 18.1, 9.9, 8.5, 5.7, 53.6]
+[4/11]  base1=ocean  base2=house  super=boathouse
+    ocean                     n= 750 acc= 48.53%  dist=[48.5, 0.9, 5.9, 6.8, 5.2, 32.7]
+    house                     n= 750 acc= 73.07%  dist=[0.1, 73.1, 4.3, 3.7, 3.7, 15.1]
+    boathouse                 n= 750 acc= 55.20%  dist=[4.5, 16.0, 7.3, 5.6, 11.3, 55.2]
+[5/11]  base1=snowfield  base2=mountain  super=mountain_snowy
+    snowfield                 n= 750 acc= 40.93%  dist=[40.9, 3.9, 2.5, 2.1, 3.3, 47.2]
+    mountain                  n= 750 acc= 24.00%  dist=[11.1, 24.0, 4.7, 4.9, 5.6, 49.7]
+    mountain_snowy            n= 750 acc= 54.80%  dist=[23.5, 15.3, 2.3, 2.3, 1.9, 54.8]
+[6/11]  base1=snowfield  base2=canyon  super=crevasse
+    snowfield                 n= 750 acc= 51.60%  dist=[51.6, 1.3, 0.4, 3.1, 3.5, 40.1]
+    canyon                    n= 750 acc= 45.73%  dist=[2.5, 45.7, 0.8, 4.8, 1.9, 44.3]
+    crevasse                  n= 750 acc= 44.93%  dist=[41.9, 6.9, 1.2, 3.3, 1.7, 44.9]
+[7/11]  base1=exterior  base2=sky  super=skyscraper
+    exterior                  n= 750 acc= 55.73%  dist=[55.7, 0.0, 7.1, 9.5, 5.7, 22.0]
+    sky                       n= 750 acc= 43.07%  dist=[2.3, 43.1, 9.1, 7.7, 6.5, 31.3]
+    skyscraper                n= 750 acc= 36.40%  dist=[19.2, 9.9, 10.3, 12.4, 11.9, 36.4]
+[8/11]  base1=assembly_line  base2=car_interior  super=auto_factory
+    assembly_line             n= 750 acc= 42.40%  dist=[42.4, 4.5, 6.7, 11.6, 8.3, 26.5]
+    car_interior              n= 750 acc= 84.13%  dist=[1.3, 84.1, 0.4, 0.8, 0.3, 13.1]
+    auto_factory              n= 750 acc= 35.87%  dist=[35.3, 9.7, 6.3, 6.4, 6.4, 35.9]
+[9/11]  base1=mountain  base2=forest_path  super=mountain_path
+    mountain                  n= 750 acc= 38.80%  dist=[38.8, 6.5, 5.9, 4.9, 4.0, 39.9]
+    forest_path               n= 750 acc= 60.00%  dist=[2.7, 60.0, 4.9, 1.7, 1.9, 28.8]
+    mountain_path             n= 750 acc= 51.73%  dist=[22.1, 16.9, 2.5, 3.2, 3.5, 51.7]
+[10/11]  base1=building_facade  base2=forest_road  super=street
+    building_facade           n= 750 acc= 43.47%  dist=[43.5, 0.3, 9.7, 6.4, 5.5, 34.7]
+    forest_road               n= 750 acc= 75.60%  dist=[0.0, 75.6, 3.2, 3.2, 1.1, 16.9]
+    street                    n= 750 acc= 46.67%  dist=[11.9, 7.9, 16.0, 11.6, 6.0, 46.7]
+[11/11]  base1=hospital_room  base2=clean_room  super=operating_room
+    hospital_room             n= 750 acc= 28.00%  dist=[28.0, 6.4, 2.4, 3.7, 5.3, 54.1]
+    clean_room                n= 750 acc= 30.53%  dist=[6.4, 30.5, 4.4, 5.6, 3.9, 49.2]
+    operating_room            n= 750 acc= 57.60%  dist=[15.1, 17.7, 2.4, 4.3, 2.9, 57.6]
+  water                      n= 1500  acc= 32.53%
+  cottage                    n= 1500  acc= 49.80%
+  super                      n= 8250  acc= 52.24%
+  house                      n= 1500  acc= 53.87%
+  ocean                      n= 1500  acc= 48.33%
+  snowfield                  n= 1500  acc= 46.27%
+  mountain                   n= 1500  acc= 31.40%
+  canyon                     n=  750  acc= 45.73%
+  exterior                   n=  750  acc= 55.73%
+  sky                        n=  750  acc= 43.07%
+  assembly_line              n=  750  acc= 42.40%
+  car_interior               n=  750  acc= 84.13%
+  forest_path                n=  750  acc= 60.00%
+  building_facade            n=  750  acc= 43.47%
+  forest_road                n=  750  acc= 75.60%
+  hospital_room              n=  750  acc= 28.00%
+  clean_room                 n=  750  acc= 30.53%
+  
+  
+  
+  

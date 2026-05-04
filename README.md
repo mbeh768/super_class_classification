@@ -4,8 +4,7 @@ We provide a PyTorch implementation of DN4 for few-shot learning.
 If you use this code, please cite: 
 
 [Revisiting Local Descriptor based Image-to-Class Measure for Few-shot Learning](http://cs.nju.edu.cn/rl/people/liwb/CVPR19.pdf).<br> 
-[Wenbin Li](https://cs.nju.edu.cn/liwenbin/), Lei Wang, Jinglin Xu, Jing Huo, Yang Gao and Jiebo Luo. In CVPR 2019.<br> 
-<img src='DN4_2019_Version/imgs/Flowchart.bmp' width=600/>
+[Wenbin Li](https://cs.nju.edu.cn/liwenbin/), Lei Wang, Jinglin Xu, Jing Huo, Yang Gao and Jiebo Luo. In CVPR 2019.
 
 
 ## Prerequisites
@@ -77,11 +76,6 @@ python Test_DN4.py --resume ./results/SGD_Cosine_Lr0.05_DN4_Conv64F_Local_Epoch_
       <td> 75.66 </td>
   </tr>
 </table>
-
-
-
-- The results on the miniImageNet dataset reported in the orinigal paper: 
-<img src='DN4_2019_Version/imgs/Results_miniImageNet2.bmp' align="center" width=710>
 
 
 

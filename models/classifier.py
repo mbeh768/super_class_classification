@@ -122,35 +122,9 @@ class ImgtoClass_Metric(nn.Module):
 
 # =========================== Zero-shot Super-Class on top of DN4 =========================== #
 class ImgtoSuperClass_Metric(nn.Module):
-	'''
-		Extends DN4 with one extra "super-class" score. The super column pools
-		local descriptors from the first `base_per_super` base classes into a
-		single bank, runs k-NN against it, then subtracts the spread of
-		constituent scores.
-
-		Output shape: (Q, way_num + 1). Columns [0..way_num) are standard DN4
-		base scores. Column `way_num` is the adjusted super-class score:
-
-		    super_raw  = k-NN score over the union of constituent descriptors
-		    spread     = max(constituent_scores) - min(constituent_scores)
-		    super_adj  = super_raw - spread
-
-		Why subtract the spread:
-		  * The union bank is a superset of each constituent bank, so
-		    super_raw >= max(constituent_score) always. Using super_raw alone
-		    (original design) made super tie-or-beat the winning constituent on
-		    every query, i.e. super stole everything.
-		  * For a pure-constituent query (e.g. pure lion) the top-k over the
-		    union is dominated by that one constituent's descriptors, so
-		    super_raw ~= winning constituent score, and the OTHER constituent's
-		    score is much lower -> large spread -> super_adj collapses toward
-		    the loser's score and the true class wins.
-		  * For a balanced super-class query (e.g. liger) both constituent
-		    scores are similar -> spread ~= 0 -> super_adj ~= super_raw. The
-		    union also picks up cross-constituent matches the individual banks
-		    miss, so super_raw typically exceeds max(constituent_score), letting
-		    super win exactly when constituents are balanced.
-	'''
+	# DN4 + a super-class column built by pooling constituent descriptor banks.
+	# Spread penalty (alpha * (max - min constituent score)) stops the union bank
+	# from dominating pure-constituent queries due to its larger size.
 	def __init__(self, way_num=5, shot_num=5, neighbor_k=3, base_per_super=2, super_alpha=1.0):
 		super(ImgtoSuperClass_Metric, self).__init__()
 		self.way_num = way_num
