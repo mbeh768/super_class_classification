@@ -1,0 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+torch
+torchvision
+numpy
+scipy
+pillow
+matplotlib
+scikit-learn
+umap-learn
