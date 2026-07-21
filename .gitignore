@@ -4,10 +4,27 @@ CLAUDE.md
 # imagenet cookie
 cookie.txt
 
-# datasets
-dataset/
+# large / regenerable raw datasets -- populate locally via
+# prepare_places365_subset.py. The bundled Places365 demo subset
+# (dataset/Places365/, ~3.8MB) and its triplet CSVs are intentionally NOT
+# ignored so `python demo_places365.py` works out of a fresh clone.
+**/dataset/*/images/
 griffins/
 ligers/
 
-# model weights
+# generated reports / experiment outputs
 results/
+
+# python bytecode
+__pycache__/
+*.pyc
+
+# model checkpoints
+*.pth
+*.pth.tar
+
+# Claude Code runtime state (not project content)
+.claude/
+
+# editor config
+.vscode/

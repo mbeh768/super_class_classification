@@ -49,33 +49,35 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--places_dir', required=True,
-                    help='root of extracted Places365 (per-class folders)')
-parser.add_argument('--csv_path', default='./dataset/Places365/potential_supers.csv',
-                    help='CSV with header: base1,base2,super')
-parser.add_argument('--triplet_filter', default=None,
-                    help='only run triplets whose super class matches this name')
-parser.add_argument('--resume', required=True,
-                    help='output directory for the results log (created if needed)')
-parser.add_argument('--encoder_model', default='DINOv2_Local')
-parser.add_argument('--classifier_model', default='DN4_SuperClass')
-parser.add_argument('--imageSize', type=int, default=224)
-parser.add_argument('--way_num', type=int, default=5)
-parser.add_argument('--shot_num', type=int, default=1)
-parser.add_argument('--query_num', type=int, default=15,
-                    help='queries per type (base1 / base2 / super)')
-parser.add_argument('--neighbor_k', type=int, default=3)
-parser.add_argument('--super_alpha', type=float, default=1.0,
-                    help='spread-penalty coefficient (0=no penalty, 1=full)')
-parser.add_argument('--episode_test_num', type=int, default=50,
-                    help='number of episodes per triplet')
-parser.add_argument('--seed', type=int, default=0)
-parser.add_argument('--cuda', action='store_true', default=True)
-opt = parser.parse_args()
-opt.cuda = opt.cuda and torch.cuda.is_available()
-device = torch.device('cuda' if opt.cuda else 'cpu')
-cudnn.benchmark = opt.cuda
+def build_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--places_dir', default=os.environ.get('PLACES365_DIR', './dataset/Places365'),
+        help='root of extracted Places365 (per-class folders)')
+    parser.add_argument('--csv_path', default=os.environ.get('PLACES365_CSV', './dataset/Places365/potential_supers.csv'),
+        help='CSV with header: base1,base2,super')
+    parser.add_argument('--triplet_filter', default=None,
+        help='only run triplets whose super class matches this name')
+    parser.add_argument('--resume', default=os.environ.get('PLACES365_OUT', './results/DINOv2_Places_Super'),
+        help='output directory for the results log (created if needed)')
+    parser.add_argument('--encoder_model', default='DINOv2_Local')
+    parser.add_argument('--classifier_model', default='DN4_SuperClass')
+    parser.add_argument('--imageSize', type=int, default=224)
+    parser.add_argument('--way_num', type=int, default=5)
+    parser.add_argument('--shot_num', type=int, default=1)
+    parser.add_argument('--query_num', type=int, default=15,
+        help='queries per type (base1 / base2 / super)')
+    parser.add_argument('--neighbor_k', type=int, default=3)
+    parser.add_argument('--super_alpha', type=float, default=1.0,
+        help='spread-penalty coefficient (0=no penalty, 1=full)')
+    parser.add_argument('--episode_test_num', type=int, default=50,
+        help='number of episodes per triplet')
+    parser.add_argument('--max_triplets', type=int, default=None,
+        help='optional limit for quick demo runs')
+    parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--cuda', action='store_true', default=torch.cuda.is_available())
+    parser.add_argument('--cpu', action='store_true', default=False,
+        help='force CPU even when CUDA is available')
+    return parser
 
 
 # ============================ Data utilities ============================ #
@@ -124,7 +126,7 @@ def discover_classes(places_dir):
 
 # ============================ Episode runner ============================ #
 
-def run_triplet(model, triplet, places_dir, distractor_pool, transform, opt, F_txt):
+def run_triplet(model, triplet, places_dir, distractor_pool, transform, opt, device, F_txt):
     """Run opt.episode_test_num episodes for a single triplet.
     Returns dict mapping target_col -> (hits, total, dist_counts)."""
     base1, base2, super_cls = triplet
@@ -217,7 +219,18 @@ def run_triplet(model, triplet, places_dir, distractor_pool, transform, opt, F_t
 
 # ============================ Main ============================ #
 
-def main():
+def main(argv=None):
+    parser = build_parser()
+    opt = parser.parse_args(argv)
+    opt.cuda = bool(opt.cuda and not opt.cpu and torch.cuda.is_available())
+    device = torch.device('cuda' if opt.cuda else 'cpu')
+    cudnn.benchmark = opt.cuda
+
+    if not os.path.isdir(opt.places_dir):
+        raise FileNotFoundError(f'Places365 directory not found: {opt.places_dir}')
+    if not os.path.isfile(opt.csv_path):
+        raise FileNotFoundError(f'CSV file not found: {opt.csv_path}')
+
     random.seed(opt.seed)
     torch.manual_seed(opt.seed)
 
@@ -273,6 +286,8 @@ def main():
     grand = defaultdict(lambda: {'hits': 0, 'total': 0})
 
     for t_idx, triplet in enumerate(triplets):
+        if opt.max_triplets is not None and t_idx >= opt.max_triplets:
+            break
         base1, base2, super_cls = triplet
         # Distractor pool: all Places classes minus the three triplet members
         distractor_pool = [c for c in all_classes
@@ -295,7 +310,7 @@ def main():
 
         t0 = time.time()
         result = run_triplet(model, triplet, opt.places_dir,
-                             distractor_pool, transform, opt, F_txt)
+                             distractor_pool, transform, opt, device, F_txt)
         if result is None:
             continue
 
